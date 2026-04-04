@@ -1,10 +1,14 @@
+import CssBaseline from "@mui/material/CssBaseline";
 import "./App.css";
+import HeroPage from "./pages/HeroPage";
+import Box from "@mui/material/Box";
 
 function App() {
   return (
-    <>
-      <p>bluehour</p>
-    </>
+    <Box sx={{ maxWidth: "xl", mx: "auto" }}>
+      <CssBaseline />
+      <HeroPage />
+    </Box>
   );
 }
 
