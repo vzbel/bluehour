@@ -47,7 +47,7 @@ const HeroNav = () => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ display: { xs: "none", sm: "flex" }, flexGrow: 1 }}
+            sx={{ display: { xs: "none", sm: "flex" }, flexGrow: 1, fontFamily: "monospace" }}
           >
             bluehour
           </Typography>
@@ -58,6 +58,7 @@ const HeroNav = () => {
               display: { xs: "flex", sm: "none" },
               flexGrow: 1,
               justifyContent: "center",
+              fontFamily: "monospace"
             }}
           >
             bluehour
