@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 
 function App() {
   return (
-    <Box sx={{ maxWidth: "xl", mx: "auto" }}>
+    <Box>
       <CssBaseline />
       <HeroPage />
     </Box>
