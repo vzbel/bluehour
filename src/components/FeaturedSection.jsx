@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 
 const FeaturedSection = ({ img }) => {
   return (
-    <Container sx={{ mt: 5, mb: 5 }}>
+    <Container sx={{ my: 5 }}>
       {/* Header text */}
       <Box sx={{ mb: 5, textAlign: "center" }} fontFamily="monospace">
         <Typography
@@ -24,7 +24,14 @@ const FeaturedSection = ({ img }) => {
       </Box>
 
       {/* Featured image */}
-      <Box sx={{ height: "400px" }}>
+      <Box
+        sx={{
+          height: "400px",
+          ":hover": { transform: "scale(102%)" },
+          transition: "0.2s ease-in-out",
+          boxShadow: "1px 2px 5px grey"
+        }}
+      >
         <Box
           component="img"
           src={img.url}

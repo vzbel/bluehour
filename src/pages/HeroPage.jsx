@@ -2,6 +2,7 @@ import HeroNav from "../components/HeroNav.jsx";
 import HeroSection from "../components/HeroSection.jsx";
 import Box from "@mui/material/Box";
 import FeaturedSection from "../components/FeaturedSection.jsx";
+import FeaturedCards from "../components/FeaturedCards.jsx";
 
 const HeroPage = () => {
   const featuredImg = {
@@ -14,6 +15,7 @@ const HeroPage = () => {
       <HeroNav />
       <HeroSection />
       <FeaturedSection img={featuredImg} />
+      <FeaturedCards />
     </Box>
   );
 };
