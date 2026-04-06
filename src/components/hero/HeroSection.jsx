@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import heroImage from "../assets/heroImage.jpg";
+import heroImage from "/src/assets/heroImage.jpg";
 
 const heroImageAlt = "A nokia phone showing hearts on its screen";
 

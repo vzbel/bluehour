@@ -1,8 +1,8 @@
-import HeroNav from "../components/HeroNav.jsx";
-import HeroSection from "../components/HeroSection.jsx";
+import HeroNav from "../components/hero/HeroNav.jsx";
+import HeroSection from "../components/hero/HeroSection.jsx";
 import Box from "@mui/material/Box";
-import FeaturedSection from "../components/FeaturedSection.jsx";
-import FeaturedCards from "../components/FeaturedCards.jsx";
+import FeaturedSection from "../components/hero/FeaturedSection.jsx";
+import FeaturedCards from "../components/hero/FeaturedCards.jsx";
 
 const HeroPage = () => {
   const featuredImg = {
