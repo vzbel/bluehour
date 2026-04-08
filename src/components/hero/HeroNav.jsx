@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import { useState } from "react";
+import { Link } from "react-router";
 
 // Homepage navigation bar
 const HeroNav = () => {
@@ -41,13 +42,21 @@ const HeroNav = () => {
             anchorEl={menuAnchor}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
+            <Link to="/login" style={{textDecoration: "none", color: "black"}}>
+              <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
+            </Link>
+            <Link to="/signup" style={{textDecoration: "none", color: "black"}}>
+              <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
+            </Link>
           </Menu>
           <Typography
             variant="h6"
             component="div"
-            sx={{ display: { xs: "none", sm: "flex" }, flexGrow: 1, fontFamily: "monospace" }}
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              flexGrow: 1,
+              fontFamily: "monospace",
+            }}
           >
             bluehour
           </Typography>
@@ -58,29 +67,33 @@ const HeroNav = () => {
               display: { xs: "flex", sm: "none" },
               flexGrow: 1,
               justifyContent: "center",
-              fontFamily: "monospace"
+              fontFamily: "monospace",
             }}
           >
             bluehour
           </Typography>
 
           {/* Log In */}
-          <Button
-            color="inherit"
-            variant="outlined"
-            sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
-          >
-            Log In
-          </Button>
+          <Link to="/login" style={{textDecoration: "none", color: "white"}}>
+            <Button
+              color="inherit"
+              variant="outlined"
+              sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
+            >
+              Log In
+            </Button>
+          </Link>
 
           {/* Sign Up */}
-          <Button
-            color="inherit"
-            variant="text"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            Sign Up
-          </Button>
+          <Link to="/signup" style={{textDecoration: "none", color: "white"}}>
+            <Button
+              color="inherit"
+              variant="text"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              Sign Up
+            </Button>
+          </Link>
         </Toolbar>
       </AppBar>
     </Box>
