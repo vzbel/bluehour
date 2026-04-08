@@ -2,7 +2,9 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import heroImage from "../assets/heroImage.jpg";
+import heroImage from "/src/assets/heroImage.jpg";
+
+import { Link } from "react-router";
 
 const heroImageAlt = "A nokia phone showing hearts on its screen";
 
@@ -45,9 +47,11 @@ const HeroSection = () => {
         >
           for any aesthetic
         </Typography>
-        <Button variant="contained" sx={{ mt: 4 }} size="large">
-          Join bluehour
-        </Button>
+        <Link to="/signup" style={{ textDecoration: "none" }}>
+          <Button variant="contained" sx={{ mt: 4 }} size="large">
+            Join bluehour
+          </Button>
+        </Link>
       </Box>
 
       {/* Hero Right */}

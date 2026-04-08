@@ -1,6 +1,6 @@
 import CssBaseline from "@mui/material/CssBaseline";
 import "./App.css";
-import HeroPage from "./pages/HeroPage";
+import HeroPage from "./pages/HeroPage.jsx";
 import Box from "@mui/material/Box";
 
 function App() {
