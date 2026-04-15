@@ -15,7 +15,6 @@ import Repeat from "@mui/icons-material/Repeat";
 import Button from "@mui/material/Button";
 
 import Typography from "@mui/material/Typography";
-import Alert from "@mui/material/Alert";
 
 import "../../styles/PostCard.css";
 import { supabase } from "../../client";
@@ -32,7 +31,7 @@ const PostCard = ({ post }) => {
     repostsCount: 0,
   });
   const [hashtags, setHashtags] = useState([]);
-  const [alert, setAlert] = useState(null);
+  const [interactionInProgress, setInteractionInProgress] = useState(false);
 
   // Retrieve profile of user
   useEffect(() => {
@@ -165,11 +164,13 @@ const PostCard = ({ post }) => {
   // Toggle the upvote depending on
   // if the user has already upvoted it
   const handleUpvote = async () => {
+    setInteractionInProgress(true);
     const {
       data: { user: currentUser },
     } = await supabase.auth.getUser();
 
     if (!currentUser) {
+      setInteractionInProgress(false);
       return;
     }
 
@@ -191,6 +192,7 @@ const PostCard = ({ post }) => {
         });
       }
     }
+    setInteractionInProgress(false);
   };
 
   return (
@@ -218,7 +220,11 @@ const PostCard = ({ post }) => {
       {/* Upvotes, comments, reposts, and share button */}
       <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box>
-          <IconButton sx={{ borderRadius: 0 }} onClick={handleUpvote}>
+          <IconButton
+            sx={{ borderRadius: 0 }}
+            onClick={handleUpvote}
+            disabled={interactionInProgress}
+          >
             <ArrowUpward sx={{ mr: 0.5 }} />
             <Typography sx={{ fontSize: "0.9rem" }}>
               {interactions.upvotesCount}
