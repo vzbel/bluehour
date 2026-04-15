@@ -15,11 +15,13 @@ import Repeat from "@mui/icons-material/Repeat";
 import Button from "@mui/material/Button";
 
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 
 import "../../styles/PostCard.css";
 import { supabase } from "../../client";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { addUpvote, hasUpvoted, removeUpvote } from "../../services/posts";
 
 const PostCard = ({ post }) => {
   const [user, setUser] = useState(null);
@@ -30,6 +32,7 @@ const PostCard = ({ post }) => {
     repostsCount: 0,
   });
   const [hashtags, setHashtags] = useState([]);
+  const [alert, setAlert] = useState(null);
 
   // Retrieve profile of user
   useEffect(() => {
@@ -159,8 +162,39 @@ const PostCard = ({ post }) => {
     year: "numeric",
   });
 
+  // Toggle the upvote depending on
+  // if the user has already upvoted it
+  const handleUpvote = async () => {
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
+    if (!currentUser) {
+      return;
+    }
+
+    const alreadyUpvoted = await hasUpvoted(post.id, currentUser.id);
+    if (alreadyUpvoted) {
+      const { error } = await removeUpvote(post.id, currentUser.id);
+      if (!error) {
+        setInteractions({
+          ...interactions,
+          upvotesCount: Math.max(interactions.upvotesCount - 1, 0),
+        });
+      }
+    } else {
+      const { error } = addUpvote(post.id, currentUser.id);
+      if (!error) {
+        setInteractions({
+          ...interactions,
+          upvotesCount: interactions.upvotesCount + 1,
+        });
+      }
+    }
+  };
+
   return (
-    <Card sx={{ maxWidth: "520px" }}>
+    <Card sx={{ width: { xs: "300px", sm: "520px" } }}>
       {/* Header */}
       <CardHeader
         avatar={<Avatar src={user.pfp_url} />}
@@ -184,7 +218,7 @@ const PostCard = ({ post }) => {
       {/* Upvotes, comments, reposts, and share button */}
       <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box>
-          <IconButton sx={{ borderRadius: 0 }}>
+          <IconButton sx={{ borderRadius: 0 }} onClick={handleUpvote}>
             <ArrowUpward sx={{ mr: 0.5 }} />
             <Typography sx={{ fontSize: "0.9rem" }}>
               {interactions.upvotesCount}
@@ -223,7 +257,7 @@ const PostCard = ({ post }) => {
 
       <CardContent>
         <Typography sx={{ fontSize: "0.9rem", mt: 1, color: "grey" }}>
-          {hashtags.length > 0 &&  `#${hashtags.join(" #")}`}
+          {hashtags.length > 0 && `#${hashtags.join(" #")}`}
         </Typography>
       </CardContent>
     </Card>

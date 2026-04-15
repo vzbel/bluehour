@@ -72,7 +72,7 @@ const HomePage = () => {
             ))}
           </>
         ) : (
-          <CircularProgress />
+          <Typography variant="h5" sx={{mt: 5}}>No posts to show!</Typography>
         )}
       </Box>
     </Box>
