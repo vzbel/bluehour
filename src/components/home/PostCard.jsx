@@ -20,7 +20,14 @@ import "../../styles/PostCard.css";
 import { supabase } from "../../client";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
-import { addUpvote, hasUpvoted, removeUpvote } from "../../services/posts";
+import {
+  addRepost,
+  addUpvote,
+  hasReposted,
+  hasUpvoted,
+  removeRepost,
+  removeUpvote,
+} from "../../services/posts";
 
 const PostCard = ({ post }) => {
   const [user, setUser] = useState(null);
@@ -195,6 +202,39 @@ const PostCard = ({ post }) => {
     setInteractionInProgress(false);
   };
 
+  const handleRepost = async () => {
+    setInteractionInProgress(true);
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
+    if (!currentUser) {
+      setInteractionInProgress(false);
+      return;
+    }
+
+    const alreadyReposted = await hasReposted(post.id, currentUser.id);
+    if (alreadyReposted) {
+      const { error } = await removeRepost(post.id, currentUser.id);
+      if (!error) {
+        setInteractions({
+          ...interactions,
+          repostsCount: Math.max(interactions.repostsCount - 1, 0),
+        });
+      }
+    } else {
+      const { error } = addRepost(post.id, currentUser.id);
+      if (!error) {
+        setInteractions({
+          ...interactions,
+          repostsCount: interactions.repostsCount + 1,
+        });
+      }
+    }
+
+    setInteractionInProgress(false);
+  };
+
   return (
     <Card sx={{ width: { xs: "300px", sm: "520px" } }}>
       {/* Header */}
@@ -238,7 +278,11 @@ const PostCard = ({ post }) => {
             </Typography>
           </IconButton>
 
-          <IconButton sx={{ borderRadius: 0 }}>
+          <IconButton
+            sx={{ borderRadius: 0 }}
+            onClick={handleRepost}
+            disabled={interactionInProgress}
+          >
             <Repeat sx={{ mr: 0.5 }} />
             <Typography sx={{ fontSize: "0.9rem" }}>
               {interactions.repostsCount}
