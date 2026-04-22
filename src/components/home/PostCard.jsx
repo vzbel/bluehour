@@ -20,7 +20,7 @@ import Typography from "@mui/material/Typography";
 import "../../styles/PostCard.css";
 import { supabase } from "../../client";
 import { useEffect, useState } from "react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import {
   addRepost,
   addUpvote,
@@ -42,6 +42,7 @@ const PostCard = ({ post, showComments = false }) => {
   });
   const [hashtags, setHashtags] = useState([]);
   const [comments, setComments] = useState([]);
+  const [postedComment, setPostedComment] = useState("");
   const [interactionInProgress, setInteractionInProgress] = useState(false);
 
   // Retrieve profile of user
@@ -278,7 +279,38 @@ const PostCard = ({ post, showComments = false }) => {
     setInteractionInProgress(false);
   };
 
-  const handleComment = async () => {};
+  const handlePostedCommentChange = (e) => {
+    setPostedComment(e.target.value);
+  };
+
+  const handleComment = async (e) => {
+    e.preventDefault();
+    setInteractionInProgress(true);
+
+    // Add the comment to post comments table
+    const { data, error } = await supabase
+      .from("Post_comments")
+      .insert({
+        post_id: post.id,
+        user_id: user.user_id,
+        comment: postedComment,
+      })
+      .select();
+
+    // Update UI to show comment count and new comment
+    if (!error) {
+      setInteractions({
+        ...interactions,
+        commentsCount: interactions.commentsCount + 1,
+      });
+      setComments([
+        ...comments,
+        { ...data[0], handle: user.handle, pfp_url: user.pfp_url },
+      ]);
+    }
+
+    setInteractionInProgress(false);
+  };
 
   return (
     <Card sx={{ width: { xs: "300px", sm: "520px" } }}>
@@ -319,7 +351,6 @@ const PostCard = ({ post, showComments = false }) => {
           <Link to={`/posts/${post.id}`}>
             <IconButton
               sx={{ borderRadius: 0 }}
-              onClick={handleComment}
               disabled={interactionInProgress}
             >
               <ChatBubble sx={{ mr: 0.5 }} />
@@ -363,7 +394,7 @@ const PostCard = ({ post, showComments = false }) => {
       </CardContent>
 
       {showComments && comments.length > 0 ? (
-        <Box sx={{backgroundColor: "#f9f8f8"}}>
+        <Box sx={{ backgroundColor: "#f9f8f8" }}>
           <CardContent sx={{ mb: 2, py: 0 }}>
             <Divider sx={{ mb: 2 }} />
             <Typography
@@ -372,11 +403,46 @@ const PostCard = ({ post, showComments = false }) => {
             >
               Comments
             </Typography>
+
+            {/* Comment form */}
+            <form onSubmit={handleComment}>
+              <TextField
+                label="Comment"
+                name="comment"
+                value={postedComment}
+                onChange={handlePostedCommentChange}
+                type="text"
+                variant="outlined"
+                size="small"
+                placeholder="this is a great post because..."
+                required={true}
+                aria-required={true}
+                sx={{ my: 2, width: 1 }}
+              >
+                Email
+              </TextField>
+              <Button
+                type="submit"
+                variant="outlined"
+                size="small"
+                sx={{ textTransform: "none" }}
+                disabled={interactionInProgress}
+              >
+                Add Comment
+              </Button>
+            </form>
           </CardContent>
           {comments.map((c) => (
             <CardContent
               key={c.user_id + c.comment}
-              sx={{ display: "flex", gap: 2, alignItems: "center", borderLeft: "2px solid", borderBottom: "1px dotted", ml: 2 }}
+              sx={{
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                borderLeft: "2px solid",
+                borderBottom: "1px dotted",
+                ml: 2,
+              }}
             >
               <Avatar src={c.pfp_url} />
               <Box>
