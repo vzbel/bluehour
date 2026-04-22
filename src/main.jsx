@@ -10,6 +10,7 @@ import "@fontsource/roboto/700.css";
 import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignupPage.jsx";
+import PostDetailPage from "./pages/PostDetailPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/posts/:postId" element={<PostDetailPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

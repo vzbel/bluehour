@@ -13,6 +13,7 @@ import ChatBubble from "@mui/icons-material/ChatBubble";
 import IosShare from "@mui/icons-material/IosShare";
 import Repeat from "@mui/icons-material/Repeat";
 import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
 
 import Typography from "@mui/material/Typography";
 
@@ -29,7 +30,9 @@ import {
   removeUpvote,
 } from "../../services/posts";
 
-const PostCard = ({ post }) => {
+import { Link } from "react-router";
+
+const PostCard = ({ post, showComments = false }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(false);
   const [interactions, setInteractions] = useState({
@@ -38,6 +41,7 @@ const PostCard = ({ post }) => {
     repostsCount: 0,
   });
   const [hashtags, setHashtags] = useState([]);
+  const [comments, setComments] = useState([]);
   const [interactionInProgress, setInteractionInProgress] = useState(false);
 
   // Retrieve profile of user
@@ -136,6 +140,45 @@ const PostCard = ({ post }) => {
       ignore = true;
     };
   }, [post]);
+
+  // Get comments
+  useEffect(() => {
+    if (!showComments) {
+      return;
+    }
+
+    let ignore = false;
+    const getComments = async () => {
+      if (!ignore) {
+        // ! is used for inner join
+        const { data, error } = await supabase
+          .from("Post_comments")
+          .select(
+            `post_id, created_at, comment, Profiles!inner(user_id, handle, pfp_url)`,
+          )
+          .eq("post_id", post.id);
+
+        if (error) {
+          setError(true);
+        } else {
+          const newComments = data.map((c) => {
+            const comment = { ...c, ...c.Profiles };
+            delete comment.Profiles;
+            return comment;
+          });
+
+          setComments([...newComments]);
+          setError(false);
+        }
+      }
+    };
+
+    getComments();
+
+    return () => {
+      ignore = true;
+    };
+  }, [showComments, post]);
   // Show error message
   if (error) {
     return (
@@ -235,6 +278,8 @@ const PostCard = ({ post }) => {
     setInteractionInProgress(false);
   };
 
+  const handleComment = async () => {};
+
   return (
     <Card sx={{ width: { xs: "300px", sm: "520px" } }}>
       {/* Header */}
@@ -271,12 +316,18 @@ const PostCard = ({ post }) => {
             </Typography>
           </IconButton>
 
-          <IconButton sx={{ borderRadius: 0 }}>
-            <ChatBubble sx={{ mr: 0.5 }} />
-            <Typography sx={{ fontSize: "0.9rem" }}>
-              {interactions.commentsCount}
-            </Typography>
-          </IconButton>
+          <Link to={`/posts/${post.id}`}>
+            <IconButton
+              sx={{ borderRadius: 0 }}
+              onClick={handleComment}
+              disabled={interactionInProgress}
+            >
+              <ChatBubble sx={{ mr: 0.5 }} />
+              <Typography sx={{ fontSize: "0.9rem" }}>
+                {interactions.commentsCount}
+              </Typography>
+            </IconButton>
+          </Link>
 
           <IconButton
             sx={{ borderRadius: 0 }}
@@ -310,6 +361,38 @@ const PostCard = ({ post }) => {
           {hashtags.length > 0 && `#${hashtags.join(" #")}`}
         </Typography>
       </CardContent>
+
+      {showComments && comments.length > 0 ? (
+        <Box sx={{backgroundColor: "#f9f8f8"}}>
+          <CardContent sx={{ mb: 2, py: 0 }}>
+            <Divider sx={{ mb: 2 }} />
+            <Typography
+              variant="h3"
+              sx={{ fontSize: "1rem", fontWeight: "500" }}
+            >
+              Comments
+            </Typography>
+          </CardContent>
+          {comments.map((c) => (
+            <CardContent
+              key={c.user_id + c.comment}
+              sx={{ display: "flex", gap: 2, alignItems: "center", borderLeft: "2px solid", borderBottom: "1px dotted", ml: 2 }}
+            >
+              <Avatar src={c.pfp_url} />
+              <Box>
+                <Typography sx={{ fontSize: "0.85rem", color: "grey" }}>
+                  {c.handle}
+                </Typography>
+                <Typography sx={{ fontSize: "0.80rem" }}>
+                  {c.comment}
+                </Typography>
+              </Box>
+            </CardContent>
+          ))}
+        </Box>
+      ) : (
+        <></>
+      )}
     </Card>
   );
 };
