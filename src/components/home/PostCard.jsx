@@ -14,6 +14,7 @@ import IosShare from "@mui/icons-material/IosShare";
 import Repeat from "@mui/icons-material/Repeat";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import Delete from "@mui/icons-material/Delete";
 
 import Typography from "@mui/material/Typography";
 
@@ -287,26 +288,71 @@ const PostCard = ({ post, showComments = false }) => {
     e.preventDefault();
     setInteractionInProgress(true);
 
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
     // Add the comment to post comments table
     const { data, error } = await supabase
       .from("Post_comments")
       .insert({
         post_id: post.id,
-        user_id: user.user_id,
+        user_id: currentUser.id,
         comment: postedComment,
       })
       .select();
 
     // Update UI to show comment count and new comment
-    if (!error) {
+    const { data: profileData, error: profileError } = await supabase
+      .from("Profiles")
+      .select()
+      .eq("user_id", currentUser.id);
+    if (!error && !profileError) {
       setInteractions({
         ...interactions,
         commentsCount: interactions.commentsCount + 1,
       });
       setComments([
         ...comments,
-        { ...data[0], handle: user.handle, pfp_url: user.pfp_url },
+        {
+          ...data[0],
+          handle: profileData[0].handle,
+          pfp_url: profileData[0].pfp_url,
+        },
       ]);
+    }
+
+    setInteractionInProgress(false);
+  };
+
+  const handleCommentRemoval = async (e, comment) => {
+    e.preventDefault();
+    setInteractionInProgress(true);
+
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
+    // Remove comment from post comments table
+    const { data, error } = await supabase
+      .from("Post_comments")
+      .delete()
+      .eq("post_id", post.id)
+      .eq("user_id", currentUser.id)
+      .eq("comment", comment)
+      .select();
+
+    // Update comment count and remove comment from UI
+    if (!error) {
+      setInteractions({
+        ...interactions,
+        commentsCount: interactions.commentsCount - 1,
+      });
+      setComments(
+        comments.filter(
+          (c) => c.user_id + c.comment !== data[0].user_id + data[0].comment,
+        ),
+      );
     }
 
     setInteractionInProgress(false);
@@ -445,13 +491,34 @@ const PostCard = ({ post, showComments = false }) => {
               }}
             >
               <Avatar src={c.pfp_url} />
-              <Box>
-                <Typography sx={{ fontSize: "0.85rem", color: "grey" }}>
-                  {c.handle}
-                </Typography>
-                <Typography sx={{ fontSize: "0.80rem" }}>
-                  {c.comment}
-                </Typography>
+              <Box
+                sx={{
+                  width: 1,
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ fontSize: "0.85rem", color: "grey" }}>
+                    {c.handle}
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.80rem" }}>
+                    {c.comment}
+                  </Typography>
+                </Box>
+
+                <IconButton
+                  sx={{
+                    borderRadius: 0,
+                  }}
+                  onClick={(e) => {
+                    handleCommentRemoval(e, c.comment);
+                  }}
+                  disabled={interactionInProgress}
+                  aria-label="delete-comment"
+                >
+                  <Delete fontSize="1rem" />
+                </IconButton>
               </Box>
             </CardContent>
           ))}
