@@ -32,7 +32,6 @@ const LoginPage = () => {
       email: user.email,
       password: user.password,
     });
-    navigate("/home");
     setLoading(false);
 
     // Display any error
@@ -41,6 +40,8 @@ const LoginPage = () => {
       setTimeout(() => {
         setError(false);
       }, 2000);
+    } else {
+      navigate("/home");
     }
   };
 
