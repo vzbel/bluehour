@@ -9,13 +9,36 @@ import MenuItem from "@mui/material/MenuItem";
 
 import MenuIcon from "@mui/icons-material/Menu";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
+import { supabase } from "../../client.js";
 
 // Homepage navigation bar
 const HeroNav = () => {
+  const [userSession, setUserSession] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const isMenuOpen = Boolean(menuAnchor);
+
+  // Check if the user is logged in
+  useEffect(() => {
+    let ignore = false;
+    const getUserSession = async () => {
+      if (!ignore) {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          setUserSession(null);
+        } else {
+          setUserSession(data.session);
+        }
+      }
+    };
+
+    getUserSession();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleMenuClick = (event) => {
     setMenuAnchor(event.currentTarget);
@@ -24,6 +47,18 @@ const HeroNav = () => {
   const handleMenuClose = () => {
     setMenuAnchor(null);
   };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    setUserSession(null);
+  };
+
+  // Listen for auth changes
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN") {
+      setUserSession(session);
+    }
+  });
 
   return (
     <Box>
@@ -42,12 +77,33 @@ const HeroNav = () => {
             anchorEl={menuAnchor}
             onClose={handleMenuClose}
           >
-            <Link to="/login" style={{textDecoration: "none", color: "black"}}>
-              <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
-            </Link>
-            <Link to="/signup" style={{textDecoration: "none", color: "black"}}>
-              <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
-            </Link>
+            {userSession ? (
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  handleLogout();
+                }}
+              >
+                Log Out
+              </MenuItem>
+            ) : (
+              [
+                <Link
+                  key="login"
+                  to="/login"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
+                </Link>,
+                <Link
+                  key="signup"
+                  to="/signup"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
+                </Link>,
+              ]
+            )}
           </Menu>
           <Typography
             variant="h6"
@@ -73,27 +129,46 @@ const HeroNav = () => {
             bluehour
           </Typography>
 
-          {/* Log In */}
-          <Link to="/login" style={{textDecoration: "none", color: "white"}}>
+          {userSession ? (
             <Button
               color="inherit"
               variant="outlined"
-              sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
+              onClick={handleLogout}
+              sx={{ display: { xs: "none", sm: "block" }, mr: 0 }}
             >
-              Log In
+              Log Out
             </Button>
-          </Link>
+          ) : (
+            <>
+              {/* Log In */}
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
+                >
+                  Log In
+                </Button>
+              </Link>
 
-          {/* Sign Up */}
-          <Link to="/signup" style={{textDecoration: "none", color: "white"}}>
-            <Button
-              color="inherit"
-              variant="text"
-              sx={{ display: { xs: "none", sm: "block" } }}
-            >
-              Sign Up
-            </Button>
-          </Link>
+              {/* Sign Up */}
+              <Link
+                to="/signup"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <Button
+                  color="inherit"
+                  variant="text"
+                  sx={{ display: { xs: "none", sm: "block" } }}
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
