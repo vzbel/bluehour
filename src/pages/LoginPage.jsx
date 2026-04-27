@@ -7,6 +7,7 @@ import Alert from "@mui/material/Alert";
 
 import { supabase } from "../client.js";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const formImage = {
   url: "https://images.unsplash.com/photo-1578301996581-bf7caec556c0?q=80&w=2102&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -20,6 +21,7 @@ const LoginPage = () => {
   });
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ const LoginPage = () => {
       email: user.email,
       password: user.password,
     });
+    navigate("/home");
     setLoading(false);
 
     // Display any error
