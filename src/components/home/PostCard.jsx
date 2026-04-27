@@ -439,7 +439,8 @@ const PostCard = ({ post, showComments = false }) => {
         </Typography>
       </CardContent>
 
-      {showComments && comments.length > 0 ? (
+      {/* Display comments section */}
+      {showComments && (
         <Box sx={{ backgroundColor: "#f9f8f8" }}>
           <CardContent sx={{ mb: 2, py: 0 }}>
             <Divider sx={{ mb: 2 }} />
@@ -478,53 +479,55 @@ const PostCard = ({ post, showComments = false }) => {
               </Button>
             </form>
           </CardContent>
-          {comments.map((c) => (
-            <CardContent
-              key={c.user_id + c.comment}
-              sx={{
-                display: "flex",
-                gap: 2,
-                alignItems: "center",
-                borderLeft: "2px solid",
-                borderBottom: "1px dotted",
-                ml: 2,
-              }}
-            >
-              <Avatar src={c.pfp_url} />
-              <Box
+          {comments.length > 0 ? (
+            comments.map((c) => (
+              <CardContent
+                key={c.user_id + c.comment}
                 sx={{
-                  width: 1,
                   display: "flex",
-                  justifyContent: "space-between",
+                  gap: 2,
+                  alignItems: "center",
+                  borderLeft: "2px solid",
+                  borderBottom: "1px dotted",
+                  ml: 2,
                 }}
               >
-                <Box>
-                  <Typography sx={{ fontSize: "0.85rem", color: "grey" }}>
-                    {c.handle}
-                  </Typography>
-                  <Typography sx={{ fontSize: "0.80rem" }}>
-                    {c.comment}
-                  </Typography>
-                </Box>
-
-                <IconButton
+                <Avatar src={c.pfp_url} />
+                <Box
                   sx={{
-                    borderRadius: 0,
+                    width: 1,
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
-                  onClick={(e) => {
-                    handleCommentRemoval(e, c.comment);
-                  }}
-                  disabled={interactionInProgress}
-                  aria-label="delete-comment"
                 >
-                  <Delete fontSize="1rem" />
-                </IconButton>
-              </Box>
-            </CardContent>
-          ))}
+                  <Box>
+                    <Typography sx={{ fontSize: "0.85rem", color: "grey" }}>
+                      {c.handle}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.80rem" }}>
+                      {c.comment}
+                    </Typography>
+                  </Box>
+
+                  <IconButton
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    onClick={(e) => {
+                      handleCommentRemoval(e, c.comment);
+                    }}
+                    disabled={interactionInProgress}
+                    aria-label="delete-comment"
+                  >
+                    <Delete fontSize="1rem" />
+                  </IconButton>
+                </Box>
+              </CardContent>
+            ))
+          ) : (
+            <></>
+          )}
         </Box>
-      ) : (
-        <></>
       )}
     </Card>
   );
