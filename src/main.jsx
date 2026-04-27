@@ -11,16 +11,19 @@ import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignupPage.jsx";
 import PostDetailPage from "./pages/PostDetailPage.jsx";
+import HeroPage from "./pages/HeroPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/posts/:postId" element={<PostDetailPage />} />
+        <Route path="/" element={<App />}>
+          <Route index element={<HeroPage />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="posts/:postId" element={<PostDetailPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

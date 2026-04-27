@@ -12,12 +12,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { supabase } from "../../client.js";
+import { useTheme } from "@mui/material";
 
 // Homepage navigation bar
 const HeroNav = () => {
   const [userSession, setUserSession] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const isMenuOpen = Boolean(menuAnchor);
+  const { palette } = useTheme();
 
   // Check if the user is logged in
   useEffect(() => {
@@ -62,7 +64,7 @@ const HeroNav = () => {
 
   return (
     <Box>
-      <AppBar position="static">
+      <AppBar position="static" sx={{backgroundColor: palette.primary.main}}>
         <Toolbar>
           {/* Menu and Logo */}
           <IconButton
