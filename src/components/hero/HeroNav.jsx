@@ -64,7 +64,7 @@ const HeroNav = () => {
 
   return (
     <Box>
-      <AppBar position="static" sx={{backgroundColor: palette.primary.main}}>
+      <AppBar position="static" sx={{ backgroundColor: palette.primary.main }}>
         <Toolbar>
           {/* Menu and Logo */}
           <IconButton
@@ -79,33 +79,42 @@ const HeroNav = () => {
             anchorEl={menuAnchor}
             onClose={handleMenuClose}
           >
-            {userSession ? (
-              <MenuItem
-                onClick={() => {
-                  handleMenuClose();
-                  handleLogout();
-                }}
-              >
-                Log Out
-              </MenuItem>
-            ) : (
-              [
-                <Link
-                  key="login"
-                  to="/login"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
-                </Link>,
-                <Link
-                  key="signup"
-                  to="/signup"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
-                </Link>,
-              ]
-            )}
+            {userSession
+              ? [
+                  <Link
+                    key="create"
+                    to="/create"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem>Create Post</MenuItem>
+                  </Link>,
+
+                  <MenuItem
+                    key="logout"
+                    onClick={() => {
+                      handleMenuClose();
+                      handleLogout();
+                    }}
+                  >
+                    Log Out
+                  </MenuItem>,
+                ]
+              : [
+                  <Link
+                    key="login"
+                    to="/login"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
+                  </Link>,
+                  <Link
+                    key="signup"
+                    to="/signup"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
+                  </Link>,
+                ]}
           </Menu>
           <Typography
             variant="h6"
@@ -132,7 +141,16 @@ const HeroNav = () => {
           </Typography>
 
           {userSession ? (
+            [
+                  <Link
+                    key="create"
+                    to="/create"
+                    style={{ textDecoration: "none", color: "white", marginRight: "10px" }}
+                  >
+                    <MenuItem sx={{display: {xs: "none", sm: "flex"}}}>Create Post</MenuItem>
+                  </Link>,
             <Button
+              key="logout"
               color="inherit"
               variant="outlined"
               onClick={handleLogout}
@@ -140,6 +158,7 @@ const HeroNav = () => {
             >
               Log Out
             </Button>
+            ]
           ) : (
             <>
               {/* Log In */}

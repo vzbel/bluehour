@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import PostDetailPage from "./pages/PostDetailPage.jsx";
 import HeroPage from "./pages/HeroPage.jsx";
+import CreatePage from "./pages/CreatePage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="posts/:postId" element={<PostDetailPage />} />
+          <Route path="create" element={<CreatePage />}/>
         </Route>
       </Routes>
     </BrowserRouter>
