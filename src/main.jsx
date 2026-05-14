@@ -7,16 +7,27 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import SignUpPage from "./pages/SignupPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import PostDetailPage from "./pages/PostDetailPage.jsx";
+import HeroPage from "./pages/HeroPage.jsx";
+import CreatePage from "./pages/CreatePage.jsx";
+import EditPage from "./pages/EditPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/" element={<App />}>
+          <Route index element={<HeroPage />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="posts/:postId" element={<PostDetailPage />} />
+          <Route path="create" element={<CreatePage />}/>
+          <Route path="edit/:postId" element={<EditPage />}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

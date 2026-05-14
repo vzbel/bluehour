@@ -9,13 +9,39 @@ import MenuItem from "@mui/material/MenuItem";
 
 import MenuIcon from "@mui/icons-material/Menu";
 
-import { useState } from "react";
-import { Link } from "react-router";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { supabase } from "../../client.js";
+import { useTheme } from "@mui/material";
 
 // Homepage navigation bar
 const HeroNav = () => {
+  const [userSession, setUserSession] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const isMenuOpen = Boolean(menuAnchor);
+  const { palette } = useTheme();
+  const navigate = useNavigate();
+
+  // Check if the user is logged in
+  useEffect(() => {
+    let ignore = false;
+    const getUserSession = async () => {
+      if (!ignore) {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          setUserSession(null);
+        } else {
+          setUserSession(data.session);
+        }
+      }
+    };
+
+    getUserSession();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleMenuClick = (event) => {
     setMenuAnchor(event.currentTarget);
@@ -25,9 +51,21 @@ const HeroNav = () => {
     setMenuAnchor(null);
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    setUserSession(null);
+  };
+
+  // Listen for auth changes
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN") {
+      setUserSession(session);
+    }
+  });
+
   return (
     <Box>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: palette.primary.main }}>
         <Toolbar>
           {/* Menu and Logo */}
           <IconButton
@@ -42,12 +80,42 @@ const HeroNav = () => {
             anchorEl={menuAnchor}
             onClose={handleMenuClose}
           >
-            <Link to="/login" style={{textDecoration: "none", color: "black"}}>
-              <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
-            </Link>
-            <Link to="/signup" style={{textDecoration: "none", color: "black"}}>
-              <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
-            </Link>
+            {userSession
+              ? [
+                  <Link
+                    key="create"
+                    to="/create"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem>Create Post</MenuItem>
+                  </Link>,
+
+                  <MenuItem
+                    key="logout"
+                    onClick={() => {
+                      handleMenuClose();
+                      handleLogout();
+                    }}
+                  >
+                    Log Out
+                  </MenuItem>,
+                ]
+              : [
+                  <Link
+                    key="login"
+                    to="/login"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleMenuClose}>Log In</MenuItem>
+                  </Link>,
+                  <Link
+                    key="signup"
+                    to="/signup"
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <MenuItem onClick={handleMenuClose}>Sign Up</MenuItem>
+                  </Link>,
+                ]}
           </Menu>
           <Typography
             variant="h6"
@@ -56,6 +124,10 @@ const HeroNav = () => {
               display: { xs: "none", sm: "flex" },
               flexGrow: 1,
               fontFamily: "monospace",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/home");
             }}
           >
             bluehour
@@ -68,32 +140,71 @@ const HeroNav = () => {
               flexGrow: 1,
               justifyContent: "center",
               fontFamily: "monospace",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/home");
             }}
           >
             bluehour
           </Typography>
 
-          {/* Log In */}
-          <Link to="/login" style={{textDecoration: "none", color: "white"}}>
-            <Button
-              color="inherit"
-              variant="outlined"
-              sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
-            >
-              Log In
-            </Button>
-          </Link>
+          {userSession ? (
+            [
+              <Link
+                key="create"
+                to="/create"
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  marginRight: "10px",
+                }}
+              >
+                <MenuItem sx={{ display: { xs: "none", sm: "flex" } }}>
+                  Create Post
+                </MenuItem>
+              </Link>,
+              <Button
+                key="logout"
+                color="inherit"
+                variant="outlined"
+                onClick={handleLogout}
+                sx={{ display: { xs: "none", sm: "block" }, mr: 0 }}
+              >
+                Log Out
+              </Button>,
+            ]
+          ) : (
+            <>
+              {/* Log In */}
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <Button
+                  color="inherit"
+                  variant="outlined"
+                  sx={{ display: { xs: "none", sm: "block" }, mr: 2 }}
+                >
+                  Log In
+                </Button>
+              </Link>
 
-          {/* Sign Up */}
-          <Link to="/signup" style={{textDecoration: "none", color: "white"}}>
-            <Button
-              color="inherit"
-              variant="text"
-              sx={{ display: { xs: "none", sm: "block" } }}
-            >
-              Sign Up
-            </Button>
-          </Link>
+              {/* Sign Up */}
+              <Link
+                to="/signup"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <Button
+                  color="inherit"
+                  variant="text"
+                  sx={{ display: { xs: "none", sm: "block" } }}
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

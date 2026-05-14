@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import FeaturedCard from "./FeaturedCard.jsx";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -35,8 +36,9 @@ const cards = [
 ];
 
 const FeaturedCards = () => {
+  const { palette } = useTheme();
   return (
-    <Box sx={{ mt: 5, py: 5, backgroundColor: blue[700] }}>
+    <Box sx={{ mt: 5, py: 5, backgroundColor: palette.primary.dark }}>
       {/* Heading */}
       <Box sx={{ overflow: "auto", color: "white" }}>
         <Typography
