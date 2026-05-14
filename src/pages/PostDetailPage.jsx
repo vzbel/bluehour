@@ -110,6 +110,7 @@ const PostDetailPage = () => {
               variant="outlined"
               sx={{ textTransform: "none" }}
               type="button"
+              onClick={() => { navigate(`/edit/${postId}`)}}
             >
               Edit Post
             </Button>
