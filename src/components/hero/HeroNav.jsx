@@ -10,7 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { supabase } from "../../client.js";
 import { useTheme } from "@mui/material";
 
@@ -20,6 +20,7 @@ const HeroNav = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const isMenuOpen = Boolean(menuAnchor);
   const { palette } = useTheme();
+  const navigate = useNavigate();
 
   // Check if the user is logged in
   useEffect(() => {
@@ -123,6 +124,10 @@ const HeroNav = () => {
               display: { xs: "none", sm: "flex" },
               flexGrow: 1,
               fontFamily: "monospace",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/home");
             }}
           >
             bluehour
@@ -135,6 +140,10 @@ const HeroNav = () => {
               flexGrow: 1,
               justifyContent: "center",
               fontFamily: "monospace",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/home");
             }}
           >
             bluehour
@@ -142,22 +151,28 @@ const HeroNav = () => {
 
           {userSession ? (
             [
-                  <Link
-                    key="create"
-                    to="/create"
-                    style={{ textDecoration: "none", color: "white", marginRight: "10px" }}
-                  >
-                    <MenuItem sx={{display: {xs: "none", sm: "flex"}}}>Create Post</MenuItem>
-                  </Link>,
-            <Button
-              key="logout"
-              color="inherit"
-              variant="outlined"
-              onClick={handleLogout}
-              sx={{ display: { xs: "none", sm: "block" }, mr: 0 }}
-            >
-              Log Out
-            </Button>
+              <Link
+                key="create"
+                to="/create"
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  marginRight: "10px",
+                }}
+              >
+                <MenuItem sx={{ display: { xs: "none", sm: "flex" } }}>
+                  Create Post
+                </MenuItem>
+              </Link>,
+              <Button
+                key="logout"
+                color="inherit"
+                variant="outlined"
+                onClick={handleLogout}
+                sx={{ display: { xs: "none", sm: "block" }, mr: 0 }}
+              >
+                Log Out
+              </Button>,
             ]
           ) : (
             <>
