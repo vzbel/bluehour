@@ -359,7 +359,7 @@ const PostCard = ({ post, showComments = false }) => {
   };
 
   return (
-    <Card sx={{ width: { xs: "300px", sm: "520px" } }}>
+    <Card sx={{ width: { xs: "300px", sm: "520px" }, my: 1 }}>
       {/* Header */}
       <CardHeader
         avatar={<Avatar src={user.pfp_url} />}
